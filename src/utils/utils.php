@@ -50,7 +50,8 @@ function addLeadingZero(
  * @param  \Stringable|string|integer|float|null $new   Either a new value which will be returned instead of the original $value, or a modifier string which will be used to update $value
  * @param  boolean                               $hex   If true $value and $new will be considered as strings containing hexadecimal numbers
  * @param  boolean                               $throw If false the function will not throw exceptions
- * 
+ * @param  boolean                               $loop  If true the result will be wrapped onto the [0, 360) range (for cyclic coordinates such as hue)
+ *
  * @return \Stringable|string|integer|float
  */
 function changeCoordinate(
@@ -58,6 +59,7 @@ function changeCoordinate(
     \Stringable|string|int|float|null $new   = null,
     bool                              $hex   = false,
     bool                              $throw = true,
+    bool                              $loop  = false,
 ) :\Stringable|string|int|float {
     if ($new === null) {
         return $value;
@@ -109,7 +111,15 @@ function changeCoordinate(
             ? throw new UnsupportedCoordinateModifier($modifier)
             : $original,
     };
-    
+
+    if ($loop && !$hex) {
+        $result = \fmod((float) $result, 360);
+
+        if ($result < 0) {
+            $result += 360;
+        }
+    }
+
     return $hex
         ? decToHex(\round($result))
         : $result
@@ -152,7 +162,7 @@ function cleanCoordinate(
     int|null                     $precision = null,
     bool                         $round     = false,
     \Stringable|string|null      $padLeft   = null,
-    int                          $length    = null,
+    ?int                         $length    = null,
 ) :float {
     if (isStringable($value)) {
         $value = addLeadingZero((string) $value);
@@ -167,14 +177,26 @@ function cleanCoordinate(
         : $value
     );
 
-    if ($min !== null) {
-        $value = \max($min, $value);
+    if ($loop && $min !== null && $max !== null && $max > $min) {
+        $range = $max - $min;
+        $value = \fmod($value - $min, $range);
+
+        if ($value < 0) {
+            $value += $range;
+        }
+
+        $value += $min;
+    }
+    else {
+        if ($min !== null) {
+            $value = \max($min, $value);
+        }
+
+        if ($max !== null) {
+            $value = \min($value, $max);
+        }
     }
 
-    if ($max !== null) {
-        $value = \min($value, $max);
-    }
-    
     $value = (float) $value;
 
     return ($padLeft === null)
@@ -265,10 +287,10 @@ function constant(
  * @return string                        The cleaned hexadecimal $value
  */
 function cleanHexValue(
-    \Stringable|string $value,
-    int                $length    = 2,
-    bool|null          $uppercase = null,
-    \Stringable|string $prefix    = null,
+    \Stringable|string      $value,
+    int                     $length    = 2,
+    bool|null               $uppercase = null,
+    \Stringable|string|null $prefix    = null,
 ) :string {
     $value  = (string) $value;
     $prefix = (string) ($prefix ?? $value);
@@ -427,8 +449,8 @@ function hexToDec(
  * @return boolean
  */
 function isColorString(
-    mixed                               $value,
-    ColorSpace|\Stringable|string|array $spaces = null,
+    mixed                                    $value,
+    ColorSpace|\Stringable|string|array|null $spaces = null,
 ) :bool {
     if (!isStringable($value)) {
         return false;
@@ -874,11 +896,11 @@ function toIterable(
  * @return array
  */
 function toColor(
-    mixed      $value,
-    ColorSpace $to,
-    ColorSpace $from      = null,
-    array|null $fallback  = null,
-    bool|null  $throw     = null,
+    mixed       $value,
+    ColorSpace  $to,
+    ?ColorSpace $from      = null,
+    array|null  $fallback  = null,
+    bool|null   $throw     = null,
 ) :array {
     $throw   ??= ($fallback === null);
     $from    ??= $to;
