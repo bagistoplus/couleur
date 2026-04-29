@@ -177,14 +177,26 @@ function cleanCoordinate(
         : $value
     );
 
-    if ($min !== null) {
-        $value = \max($min, $value);
+    if ($loop && $min !== null && $max !== null && $max > $min) {
+        $range = $max - $min;
+        $value = \fmod($value - $min, $range);
+
+        if ($value < 0) {
+            $value += $range;
+        }
+
+        $value += $min;
+    }
+    else {
+        if ($min !== null) {
+            $value = \max($min, $value);
+        }
+
+        if ($max !== null) {
+            $value = \min($value, $max);
+        }
     }
 
-    if ($max !== null) {
-        $value = \min($value, $max);
-    }
-    
     $value = (float) $value;
 
     return ($padLeft === null)
