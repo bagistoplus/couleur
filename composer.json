@@ -1,6 +1,6 @@
 {
-    "name"        : "matthieumastadenis/couleur",
-    "description" : "A modern PHP 8.1+ color library, compatible with CSS Color Module Level 4",
+    "name"        : "bagistoplus/couleur",
+    "description" : "A modern PHP 8.2+ color library, compatible with CSS Color Module Level 4",
     "type"        : "library",
     "license"     : "MIT",
     "authors"     : [
@@ -10,10 +10,9 @@
         }
     ],
     "require": {
-        "php" : "~8.1"
+        "php" : "^8.2"
     },
     "require-dev" : {
-        "php"             : "^8.2",
         "phpunit/phpunit" : "^11.0"
     },
     "autoload" : {
