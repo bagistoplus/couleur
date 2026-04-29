@@ -51,7 +51,7 @@ implements ColorInterface {
 
         return ColorFactory::newHsv(
             value    : [
-                utils\changeCoordinate($this->hue,        $hue,        false, $changeThrow),
+                utils\changeCoordinate($this->hue,        $hue,        false, $changeThrow, true),
                 utils\changeCoordinate($this->saturation, $saturation, false, $changeThrow),
                 utils\changeCoordinate($this->value,      $value,      false, $changeThrow),
                 utils\changeCoordinate($this->opacity,    $opacity,    false, $changeThrow),

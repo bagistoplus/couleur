@@ -55,7 +55,7 @@ implements ColorInterface {
             value    : [
                 utils\changeCoordinate($this->lightness, $lightness, false, $changeThrow),
                 utils\changeCoordinate($this->chroma,    $chroma,    false, $changeThrow),
-                utils\changeCoordinate($this->hue,       $hue,       false, $changeThrow),
+                utils\changeCoordinate($this->hue,       $hue,       false, $changeThrow, true),
                 utils\changeCoordinate($this->opacity,   $opacity,   false, $changeThrow),
             ],
             from     : $this::space(),

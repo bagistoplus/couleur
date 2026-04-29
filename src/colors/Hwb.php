@@ -50,7 +50,7 @@ implements ColorInterface {
 
         return ColorFactory::newHwb(
             value    : [
-                utils\changeCoordinate($this->hue,       $hue,       false, $changeThrow),
+                utils\changeCoordinate($this->hue,       $hue,       false, $changeThrow, true),
                 utils\changeCoordinate($this->whiteness, $whiteness, false, $changeThrow),
                 utils\changeCoordinate($this->blackness, $blackness, false, $changeThrow),
                 utils\changeCoordinate($this->opacity,   $opacity,   false, $changeThrow),

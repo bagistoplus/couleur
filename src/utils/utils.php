@@ -50,7 +50,8 @@ function addLeadingZero(
  * @param  \Stringable|string|integer|float|null $new   Either a new value which will be returned instead of the original $value, or a modifier string which will be used to update $value
  * @param  boolean                               $hex   If true $value and $new will be considered as strings containing hexadecimal numbers
  * @param  boolean                               $throw If false the function will not throw exceptions
- * 
+ * @param  boolean                               $loop  If true the result will be wrapped onto the [0, 360) range (for cyclic coordinates such as hue)
+ *
  * @return \Stringable|string|integer|float
  */
 function changeCoordinate(
@@ -58,6 +59,7 @@ function changeCoordinate(
     \Stringable|string|int|float|null $new   = null,
     bool                              $hex   = false,
     bool                              $throw = true,
+    bool                              $loop  = false,
 ) :\Stringable|string|int|float {
     if ($new === null) {
         return $value;
@@ -109,7 +111,15 @@ function changeCoordinate(
             ? throw new UnsupportedCoordinateModifier($modifier)
             : $original,
     };
-    
+
+    if ($loop && !$hex) {
+        $result = \fmod((float) $result, 360);
+
+        if ($result < 0) {
+            $result += 360;
+        }
+    }
+
     return $hex
         ? decToHex(\round($result))
         : $result

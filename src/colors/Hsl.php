@@ -51,7 +51,7 @@ implements ColorInterface {
 
         return ColorFactory::newHsl(
             value    : [
-                utils\changeCoordinate($this->hue,        $hue,        false, $changeThrow),
+                utils\changeCoordinate($this->hue,        $hue,        false, $changeThrow, true),
                 utils\changeCoordinate($this->saturation, $saturation, false, $changeThrow),
                 utils\changeCoordinate($this->lightness,  $lightness,  false, $changeThrow),
                 utils\changeCoordinate($this->opacity,    $opacity,    false, $changeThrow),
